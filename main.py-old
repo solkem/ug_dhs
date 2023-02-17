@@ -1,0 +1,39 @@
+#! /usr/bin/python3
+# from extract_csv import *
+import boto3
+import pandas as pd
+import geopandas as gpd
+
+# specify bucket name and file names
+
+def extract_files():
+    # create S3 resource
+    s3 = boto3.resource('s3')
+    
+    # specify bucket name and file names
+    bucket_name = 'ds-interview-sandbox'
+    file_names = [
+        'shared/data dictionary.csv',
+        'shared/ug_clusters.csv',
+        'shared/uga_dhs_2016.csv',
+        'shared/uga_regions.geojson'
+    ]
+    
+    # create pandas and geopandas dataframes from S3 files
+    data_dict_df = pd.read_csv(f's3://{bucket_name}/{file_names[0]}')
+    clusters_df = pd.read_csv(f's3://{bucket_name}/{file_names[1]}')
+    dhs_df = pd.read_csv(f's3://{bucket_name}/{file_names[2]}')
+    regions_gdf = gpd.read_file(f's3://{bucket_name}/{file_names[3]}')
+    regions_df = regions_gdf.drop(columns='geometry')
+    
+    # print dataframes to check the data
+    print(data_dict_df.head())
+    print(clusters_df.head())
+    print(dhs_df.head())
+    print(regions_df.head())
+
+if __name__ == "__main__":
+    #db_config = config(section="postgresql")
+    extract_files()
+    
+    
